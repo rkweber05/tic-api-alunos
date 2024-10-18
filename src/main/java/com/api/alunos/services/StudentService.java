@@ -39,8 +39,7 @@ public class StudentService {
         return studentRepository.save(studentModel);
     }
 
-    public void removeStudent(Integer id) throws Exception {
-        StudentModel studentRemove = studentRepository.findById(id).orElseThrow(() -> new Exception("Estudante não encontrado !"));
-        studentRepository.delete(studentRemove);
+    public void removeStudent(Integer id) {
+        studentRepository.deleteById(id);
     }
 }
