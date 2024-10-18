@@ -2,6 +2,7 @@ package com.api.alunos.controlles;
 
 import com.api.alunos.models.StudentModel;
 import com.api.alunos.repositories.StudentRepository;
+import com.api.alunos.services.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +17,28 @@ import java.util.Optional;
 @AllArgsConstructor
 public class StudentController {
     private final StudentRepository studentRepository;
+    private final StudentService studentService;
 
     @GetMapping
     public ResponseEntity<List<StudentModel>> findAllStudent() {
-        return new ResponseEntity<>(studentRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(studentService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<StudentModel> findStudentById(@PathVariable Integer id) {
-        Optional<StudentModel> studentById = studentRepository.findById(id);
+        Optional<StudentModel> studentById = studentService.findById(id);
         return ResponseEntity.ok().body(studentById.get());
     }
 
     @PostMapping
     public ResponseEntity<StudentModel> createNewStudent(@RequestBody StudentModel studentModel) {
         studentModel.setId(null);
-        return new ResponseEntity<>(studentRepository.save(studentModel), HttpStatus.CREATED);
+        return new ResponseEntity<>(studentService.create(studentModel), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<StudentModel> updateSudent(@PathVariable Integer id, @RequestBody StudentModel studentModel) {
-        var updateStudent = studentRepository.save(studentModel);
+        var updateStudent = studentService.updateNewStudent(id, studentModel);
         return ResponseEntity.ok(updateStudent);
     }
 
@@ -47,8 +49,8 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteStudentById(@PathVariable Integer id) {
-        studentRepository.deleteById(id);
+    public ResponseEntity<Void> deleteStudentById(@PathVariable Integer id) throws Exception {
+        studentService.removeStudent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
